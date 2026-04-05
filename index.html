@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>City-V | Akıllı Şehir İzleme Platformu</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="header">
+    <div class="header-inner">
+      <div class="logo">
+        <span class="logo-icon">🏙️</span>
+        <span class="logo-text">City<strong>V</strong></span>
+      </div>
+      <p class="tagline">Şehirleri Zekâyla Yönet, Geleceği Birlikte İnşa Et</p>
+    </div>
+  </header>
+
+  <main class="main">
+    <!-- City Selector -->
+    <section class="city-selector" aria-label="Şehir Seçimi">
+      <h2 class="section-title">Şehir Seçin</h2>
+      <div class="city-tabs" role="tablist" aria-label="Şehirler">
+        <button class="city-tab active" role="tab" aria-selected="true"  data-city="istanbul"  aria-controls="dashboard">İstanbul</button>
+        <button class="city-tab"        role="tab" aria-selected="false" data-city="ankara"    aria-controls="dashboard">Ankara</button>
+        <button class="city-tab"        role="tab" aria-selected="false" data-city="izmir"     aria-controls="dashboard">İzmir</button>
+        <button class="city-tab"        role="tab" aria-selected="false" data-city="antalya"   aria-controls="dashboard">Antalya</button>
+        <button class="city-tab"        role="tab" aria-selected="false" data-city="bursa"     aria-controls="dashboard">Bursa</button>
+      </div>
+    </section>
+
+    <!-- Dashboard -->
+    <section id="dashboard" class="dashboard" role="tabpanel">
+      <div class="city-hero">
+        <h1 id="city-name" class="city-name"></h1>
+        <p id="city-desc" class="city-desc"></p>
+        <span id="city-status" class="city-status-badge"></span>
+      </div>
+
+      <!-- Metric Cards -->
+      <div class="metrics-grid">
+        <!-- Trafik -->
+        <article class="metric-card" data-module="traffic">
+          <div class="card-header">
+            <span class="module-icon" aria-hidden="true">🚦</span>
+            <h3 class="module-title">Trafik</h3>
+            <span class="status-dot" id="traffic-dot"></span>
+          </div>
+          <div class="card-body">
+            <div class="stat-row">
+              <span class="stat-label">Yoğunluk</span>
+              <span class="stat-value" id="traffic-density">—</span>
+            </div>
+            <div class="progress-bar-wrap">
+              <div class="progress-bar" id="traffic-bar"></div>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Ortalama Hız</span>
+              <span class="stat-value" id="traffic-speed">—</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Aktif Kaza</span>
+              <span class="stat-value" id="traffic-accidents">—</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Durum</span>
+              <span class="stat-value" id="traffic-status">—</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- Enerji -->
+        <article class="metric-card" data-module="energy">
+          <div class="card-header">
+            <span class="module-icon" aria-hidden="true">⚡</span>
+            <h3 class="module-title">Enerji</h3>
+            <span class="status-dot" id="energy-dot"></span>
+          </div>
+          <div class="card-body">
+            <div class="stat-row">
+              <span class="stat-label">Tüketim</span>
+              <span class="stat-value" id="energy-consumption">—</span>
+            </div>
+            <div class="progress-bar-wrap">
+              <div class="progress-bar" id="energy-bar"></div>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Yenilenebilir Pay</span>
+              <span class="stat-value" id="energy-renewable">—</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Şebeke Durumu</span>
+              <span class="stat-value" id="energy-grid">—</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Durum</span>
+              <span class="stat-value" id="energy-status">—</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- Atık -->
+        <article class="metric-card" data-module="waste">
+          <div class="card-header">
+            <span class="module-icon" aria-hidden="true">♻️</span>
+            <h3 class="module-title">Atık</h3>
+            <span class="status-dot" id="waste-dot"></span>
+          </div>
+          <div class="card-body">
+            <div class="stat-row">
+              <span class="stat-label">Günlük Üretim</span>
+              <span class="stat-value" id="waste-daily">—</span>
+            </div>
+            <div class="progress-bar-wrap">
+              <div class="progress-bar" id="waste-bar"></div>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Geri Dönüşüm Oranı</span>
+              <span class="stat-value" id="waste-recycle">—</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Dolu Konteyner</span>
+              <span class="stat-value" id="waste-bins">—</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Durum</span>
+              <span class="stat-value" id="waste-status">—</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- Güvenlik -->
+        <article class="metric-card" data-module="security">
+          <div class="card-header">
+            <span class="module-icon" aria-hidden="true">🔒</span>
+            <h3 class="module-title">Güvenlik</h3>
+            <span class="status-dot" id="security-dot"></span>
+          </div>
+          <div class="card-body">
+            <div class="stat-row">
+              <span class="stat-label">Aktif Kamera</span>
+              <span class="stat-value" id="security-cameras">—</span>
+            </div>
+            <div class="progress-bar-wrap">
+              <div class="progress-bar" id="security-bar"></div>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Aktif Alarm</span>
+              <span class="stat-value" id="security-alarms">—</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Müdahale Süresi</span>
+              <span class="stat-value" id="security-response">—</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Durum</span>
+              <span class="stat-value" id="security-status">—</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- Çevre -->
+        <article class="metric-card" data-module="environment">
+          <div class="card-header">
+            <span class="module-icon" aria-hidden="true">🌿</span>
+            <h3 class="module-title">Çevre</h3>
+            <span class="status-dot" id="environment-dot"></span>
+          </div>
+          <div class="card-body">
+            <div class="stat-row">
+              <span class="stat-label">Hava Kalitesi (AQI)</span>
+              <span class="stat-value" id="environment-aqi">—</span>
+            </div>
+            <div class="progress-bar-wrap">
+              <div class="progress-bar" id="environment-bar"></div>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Gürültü Seviyesi</span>
+              <span class="stat-value" id="environment-noise">—</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Sıcaklık</span>
+              <span class="stat-value" id="environment-temp">—</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Durum</span>
+              <span class="stat-value" id="environment-status">—</span>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <!-- Last Updated -->
+      <p class="last-updated">Son güncelleme: <span id="last-updated-time"></span></p>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>© 2024 City-V · Akıllı Şehir İzleme Platformu · İstanbul · Ankara · İzmir · Antalya · Bursa</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

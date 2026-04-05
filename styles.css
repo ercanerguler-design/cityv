@@ -1,0 +1,294 @@
+/* =========================================================
+   City-V — Akıllı Şehir İzleme Platformu
+   ========================================================= */
+
+/* ---- Reset & Base ---- */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --clr-bg:        #0d1117;
+  --clr-surface:   #161b22;
+  --clr-surface2:  #21262d;
+  --clr-border:    #30363d;
+  --clr-text:      #e6edf3;
+  --clr-muted:     #8b949e;
+  --clr-accent:    #58a6ff;
+  --clr-green:     #3fb950;
+  --clr-yellow:    #d29922;
+  --clr-red:       #f85149;
+
+  --radius:        12px;
+  --radius-sm:     8px;
+  --shadow:        0 4px 24px rgba(0,0,0,.4);
+  --transition:    .25s ease;
+}
+
+html { font-size: 16px; }
+
+body {
+  background: var(--clr-bg);
+  color: var(--clr-text);
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  line-height: 1.5;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---- Header ---- */
+.header {
+  background: linear-gradient(135deg, #1a2332 0%, #0d1117 100%);
+  border-bottom: 1px solid var(--clr-border);
+  padding: 1.25rem 2rem;
+}
+
+.header-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--clr-text);
+  text-decoration: none;
+}
+
+.logo-icon { font-size: 2rem; }
+
+.logo-text strong {
+  color: var(--clr-accent);
+}
+
+.tagline {
+  color: var(--clr-muted);
+  font-size: .9rem;
+}
+
+/* ---- Main ---- */
+.main {
+  flex: 1;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+  width: 100%;
+}
+
+/* ---- Section Titles ---- */
+.section-title {
+  font-size: .75rem;
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--clr-muted);
+  margin-bottom: .75rem;
+}
+
+/* ---- City Tabs ---- */
+.city-selector {
+  margin-bottom: 2rem;
+}
+
+.city-tabs {
+  display: flex;
+  gap: .5rem;
+  flex-wrap: wrap;
+}
+
+.city-tab {
+  background: var(--clr-surface);
+  border: 1px solid var(--clr-border);
+  color: var(--clr-muted);
+  padding: .6rem 1.4rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: .95rem;
+  font-weight: 500;
+  transition: background var(--transition), color var(--transition), border-color var(--transition);
+}
+
+.city-tab:hover {
+  background: var(--clr-surface2);
+  color: var(--clr-text);
+  border-color: var(--clr-accent);
+}
+
+.city-tab.active {
+  background: var(--clr-accent);
+  border-color: var(--clr-accent);
+  color: #0d1117;
+  font-weight: 700;
+}
+
+/* ---- City Hero ---- */
+.city-hero {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.75rem;
+}
+
+.city-name {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--clr-text);
+}
+
+.city-desc {
+  color: var(--clr-muted);
+  font-size: .95rem;
+}
+
+.city-status-badge {
+  margin-left: auto;
+  padding: .35rem .85rem;
+  border-radius: 999px;
+  font-size: .8rem;
+  font-weight: 600;
+  background: rgba(63, 185, 80, .15);
+  color: var(--clr-green);
+  border: 1px solid rgba(63, 185, 80, .35);
+}
+
+/* ---- Metrics Grid ---- */
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.25rem;
+}
+
+/* ---- Metric Card ---- */
+.metric-card {
+  background: var(--clr-surface);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+  box-shadow: var(--shadow);
+  transition: transform var(--transition), box-shadow var(--transition);
+}
+
+.metric-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 32px rgba(0,0,0,.5);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  margin-bottom: 1rem;
+  padding-bottom: .75rem;
+  border-bottom: 1px solid var(--clr-border);
+}
+
+.module-icon { font-size: 1.4rem; }
+
+.module-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--clr-text);
+  flex: 1;
+}
+
+/* Status Dot */
+.status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--clr-green);
+  flex-shrink: 0;
+  box-shadow: 0 0 6px var(--clr-green);
+  animation: pulse 2s infinite;
+}
+
+.status-dot.warning {
+  background: var(--clr-yellow);
+  box-shadow: 0 0 6px var(--clr-yellow);
+}
+
+.status-dot.danger {
+  background: var(--clr-red);
+  box-shadow: 0 0 6px var(--clr-red);
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: .5; }
+}
+
+/* Stat Rows */
+.card-body { display: flex; flex-direction: column; gap: .55rem; }
+
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: .875rem;
+}
+
+.stat-label { color: var(--clr-muted); }
+
+.stat-value {
+  font-weight: 600;
+  color: var(--clr-text);
+  text-align: right;
+}
+
+/* Progress Bar */
+.progress-bar-wrap {
+  background: var(--clr-surface2);
+  border-radius: 999px;
+  height: 6px;
+  overflow: hidden;
+  margin: .25rem 0;
+}
+
+.progress-bar {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--clr-accent), #79c0ff);
+  transition: width .6s ease;
+  width: 0%;
+}
+
+.progress-bar.warning {
+  background: linear-gradient(90deg, var(--clr-yellow), #e3b341);
+}
+
+.progress-bar.danger {
+  background: linear-gradient(90deg, var(--clr-red), #ff7b72);
+}
+
+/* ---- Last Updated ---- */
+.last-updated {
+  margin-top: 1.5rem;
+  font-size: .8rem;
+  color: var(--clr-muted);
+  text-align: right;
+}
+
+/* ---- Footer ---- */
+.footer {
+  background: var(--clr-surface);
+  border-top: 1px solid var(--clr-border);
+  padding: 1.25rem 2rem;
+  text-align: center;
+  color: var(--clr-muted);
+  font-size: .8rem;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 640px) {
+  .header { padding: 1rem; }
+  .main   { padding: 1.25rem 1rem; }
+  .city-name { font-size: 1.5rem; }
+  .metrics-grid { grid-template-columns: 1fr; }
+}
