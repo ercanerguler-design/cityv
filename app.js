@@ -13,7 +13,7 @@ const CITIES = {
     population: "15.8M",
     traffic: {
       density: 82,
-      speed: "28 km/s",
+      speed: "28 km/h",
       accidents: 7,
       status: "Yoğun",
       level: "danger",
@@ -57,7 +57,7 @@ const CITIES = {
     population: "5.8M",
     traffic: {
       density: 61,
-      speed: "42 km/s",
+      speed: "42 km/h",
       accidents: 3,
       status: "Orta Yoğun",
       level: "warning",
@@ -101,7 +101,7 @@ const CITIES = {
     population: "4.4M",
     traffic: {
       density: 55,
-      speed: "48 km/s",
+      speed: "48 km/h",
       accidents: 2,
       status: "Akıcı",
       level: "ok",
@@ -145,7 +145,7 @@ const CITIES = {
     population: "2.7M",
     traffic: {
       density: 49,
-      speed: "52 km/s",
+      speed: "52 km/h",
       accidents: 1,
       status: "Akıcı",
       level: "ok",
@@ -189,7 +189,7 @@ const CITIES = {
     population: "3.2M",
     traffic: {
       density: 67,
-      speed: "38 km/s",
+      speed: "38 km/h",
       accidents: 4,
       status: "Orta Yoğun",
       level: "warning",
