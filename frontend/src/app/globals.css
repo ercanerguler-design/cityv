@@ -1,0 +1,100 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import 'leaflet/dist/leaflet.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #070b16;
+  --card: #0c1426;
+  --border: #1c2a4a;
+  --cyan: #00d4ff;
+  --purple: #7c3aed;
+  --magenta: #ec4899;
+  --green: #10b981;
+  --amber: #f59e0b;
+  --red: #ef4444;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+  background-color: var(--bg);
+  background-image:
+    radial-gradient(circle at 12% 20%, rgba(0, 212, 255, 0.09), transparent 34%),
+    radial-gradient(circle at 85% 16%, rgba(124, 58, 237, 0.11), transparent 36%),
+    radial-gradient(circle at 55% 90%, rgba(236, 72, 153, 0.06), transparent 30%);
+  color: #e2e8f0;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.app-aurora::before {
+  content: '';
+  position: fixed;
+  inset: -30% -10%;
+  pointer-events: none;
+  z-index: -1;
+  background:
+    radial-gradient(45% 45% at 25% 25%, rgba(0, 212, 255, 0.14) 0%, rgba(0, 212, 255, 0) 65%),
+    radial-gradient(40% 40% at 75% 30%, rgba(124, 58, 237, 0.16) 0%, rgba(124, 58, 237, 0) 65%),
+    radial-gradient(35% 35% at 55% 70%, rgba(236, 72, 153, 0.1) 0%, rgba(236, 72, 153, 0) 68%);
+  filter: blur(36px);
+  animation: auroraDrift 16s ease-in-out infinite alternate;
+}
+
+@keyframes auroraDrift {
+  0% { transform: translate3d(-1%, -2%, 0) scale(1); }
+  100% { transform: translate3d(2%, 1%, 0) scale(1.06); }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: #0d1627; }
+::-webkit-scrollbar-thumb { background: #1a2744; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #00d4ff44; }
+
+/* Card style */
+.city-card {
+  @apply bg-city-card/80 border border-city-border rounded-xl p-5;
+  box-shadow: 0 10px 30px rgba(7, 11, 22, 0.35);
+  backdrop-filter: blur(8px);
+}
+
+/* Glow effects */
+.glow-cyan {
+  box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
+}
+.glow-red {
+  box-shadow: 0 0 15px rgba(239, 68, 68, 0.3);
+}
+.glow-green {
+  box-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
+}
+
+/* Status badge */
+.badge {
+  @apply inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium;
+}
+.badge-critical { @apply badge bg-red-900/40 text-red-400 border border-red-800; }
+.badge-high     { @apply badge bg-amber-900/40 text-amber-400 border border-amber-800; }
+.badge-moderate { @apply badge bg-yellow-900/40 text-yellow-400 border border-yellow-800; }
+.badge-low      { @apply badge bg-green-900/40 text-green-400 border border-green-800; }
+.badge-good     { @apply badge bg-emerald-900/40 text-emerald-400 border border-emerald-800; }
+.badge-pending  { @apply badge bg-blue-900/40 text-blue-400 border border-blue-800; }
+
+/* Live dot */
+.live-dot {
+  @apply inline-block w-2 h-2 rounded-full bg-city-green animate-pulse;
+}
+
+/* Map container */
+.leaflet-container {
+  background: #080d1a !important;
+  border-radius: 12px;
+}

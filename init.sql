@@ -1,0 +1,2 @@
+-- Optional bootstrap SQL file for docker postgres init.
+-- Keep intentionally minimal for now.
