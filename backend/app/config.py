@@ -10,7 +10,7 @@ class Settings(BaseSettings):
     DATABASE_URL: str = "postgresql+psycopg://cityv_user:cityv_secret@localhost:5432/cityv"
     DATABASE_FALLBACK_URL: str = "sqlite:///./cityv_v2.db"
     DB_FALLBACK_ENABLED: bool = True
-    CORS_ORIGINS: str = "http://localhost:3000,http://127.0.0.1:3000,http://0.0.0.0:3000"
+    CORS_ORIGINS: str = "http://localhost:3000,http://127.0.0.1:3000,http://0.0.0.0:3000,https://cityv.vercel.app"
     CORS_ORIGIN_REGEX: str = r"https?://(localhost|127\.0\.0\.1|0\.0\.0\.0|10\.\d+\.\d+\.\d+|192\.168\.\d+\.\d+|172\.(1[6-9]|2[0-9]|3[0-1])\.\d+\.\d+)(:\d+)?$"
     SIMULATION_INTERVAL: int = 5  # seconds
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 720
