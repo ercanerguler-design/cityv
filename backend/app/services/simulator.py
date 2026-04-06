@@ -6,6 +6,7 @@ import asyncio
 import random
 import math
 import logging
+import re
 from datetime import datetime
 from typing import Optional
 from app.database import SessionLocal
@@ -92,13 +93,59 @@ CITY_DISTRICT_NAMES = {
     "Antalya": [
         "Akseki", "Aksu", "Alanya", "Demre", "Döşemealtı", "Elmalı", "Finike", "Gazipaşa", "Gündoğmuş", "İbradı",
         "Kaş", "Kemer", "Kepez", "Konyaaltı", "Korkuteli", "Kumluca", "Manavgat", "Muratpaşa", "Serik",
-        "Lara",
     ],
     "Bursa": [
         "Büyükorhan", "Gemlik", "Gürsu", "Harmancık", "İnegöl", "İznik", "Karacabey", "Keles", "Kestel", "Mudanya",
         "Mustafakemalpaşa", "Nilüfer", "Orhaneli", "Orhangazi", "Osmangazi", "Yenişehir", "Yıldırım",
     ],
 }
+
+# Real semt pools for simulated location names (5-city pilot)
+CITY_SEMTS = {
+    "İstanbul": [
+        "Nişantaşı", "Levent", "Etiler", "Mecidiyeköy", "Ortaköy", "Bebek", "Galata", "Karaköy", "Cihangir", "Taksim",
+        "Moda", "Fenerbahçe", "Caddebostan", "Bostancı", "Kozyatağı", "Acıbadem", "Ümraniye Çarşı", "Maslak", "Tarabya", "Yeşilköy",
+    ],
+    "Ankara": [
+        "Kızılay", "Tunalı", "Bahçelievler", "Balgat", "Dikmen", "Ayrancı", "Cebeci", "Batıkent", "Eryaman", "Sıhhiye",
+        "Ulus", "Kurtuluş", "Demetevler", "Etlik", "Subayevleri", "İncek", "Oran", "Çayyolu", "Ostim", "Ahlatlıbel",
+    ],
+    "İzmir": [
+        "Alsancak", "Kordon", "Kemeraltı", "Karataş", "Göztepe", "Bostanlı", "Mavişehir", "Bornova Merkez", "Şirinyer", "Hatay",
+        "Balçova Çarşı", "Narlıdere Sahil", "Urla İskele", "Alaçatı", "Foça Merkez", "Karşıyaka Çarşı", "Bayraklı Sahil", "Gaziemir Merkez", "Buca Hasanağa", "Çiğli Ataşehir",
+    ],
+    "Antalya": [
+        "Kaleiçi", "Liman", "Lara", "Işıklar", "Meltem", "Döşemealtı Merkez", "Varsak", "Uncalı", "Kepezüstü", "Aksu Merkez",
+        "Belek", "Side", "Kemer Merkez", "Kaş Çarşı", "Alanya Merkez", "Konyaaltı Sahil", "Muratpaşa Çarşı", "Manavgat Çarşı", "Kumluca Merkez", "Finike Sahil",
+    ],
+    "Bursa": [
+        "Heykel", "Çekirge", "Nilüfer FSM", "Görükle", "Mudanya İskele", "Gemlik Merkez", "İnegöl Çarşı", "Yıldırım Arabayatağı", "Osmangazi Altıparmak", "Kestel Merkez",
+        "Orhangazi Merkez", "Karacabey Merkez", "Mustafakemalpaşa Çarşı", "Yenişehir Merkez", "İznik Sahil", "Gürsu Merkez", "Keles Merkez", "Harmancık Merkez", "Büyükorhan Merkez", "Nilüfer Özlüce",
+    ],
+}
+
+
+TR_CHAR_MAP = str.maketrans({
+    "ç": "c", "Ç": "C", "ğ": "g", "Ğ": "G", "ı": "i", "İ": "I",
+    "ö": "o", "Ö": "O", "ş": "s", "Ş": "S", "ü": "u", "Ü": "U",
+})
+
+
+def _district_code(name: str, idx: int) -> str:
+    normalized = name.translate(TR_CHAR_MAP)
+    only_letters = re.sub(r"[^A-Za-z]", "", normalized).upper()
+    # Keep IDs readable but globally unique per district index.
+    prefix = only_letters[:3] if len(only_letters) >= 3 else "DST"
+    return f"{prefix}{idx:03d}"
+
+
+def _pick_semt(city: str, district: str, idx: int) -> str:
+    semts = CITY_SEMTS.get(city, [])
+    if not semts:
+        return district
+    # deterministic-ish spread by district and index
+    pick = (abs(hash(district)) + idx * 7) % len(semts)
+    return semts[pick]
 
 
 def _build_city_districts(city: str, seed_rows: list, district_names: list) -> list:
@@ -348,15 +395,18 @@ class CitySimulator:
     def _init_static_data(self):
         """Pre-create sensors/containers for all districts."""
         sensor_idx = 0
-        for district in ALL_DISTRICTS:
+        for district_idx, district in enumerate(ALL_DISTRICTS):
             d = district["name"]
+            city = district.get("city", "İstanbul")
+            d_code = _district_code(d, district_idx)
             # 3 traffic sensors per district
             for i in range(3):
                 road, offset = TRAFFIC_LOCATIONS[(sensor_idx + i) % len(TRAFFIC_LOCATIONS)]
-                sid = f"TRF-{d[:3].upper()}-{i+1:02d}"
+                semt = _pick_semt(city, d, i)
+                sid = f"TRF-{d_code}-{i+1:02d}"
                 self.latest_traffic[sid] = {
-                    "sensor_id": sid, "district": d, "city": district.get("city", "İstanbul"),
-                    "location_name": f"{d} - {road}",
+                    "sensor_id": sid, "district": d, "city": city,
+                    "location_name": f"{d} {semt} - {road}",
                     "lat": district["lat"] + random.uniform(-0.02, 0.02),
                     "lng": district["lng"] + random.uniform(-0.02, 0.02),
                     "vehicle_count": 0, "avg_speed": 50.0,
@@ -366,9 +416,10 @@ class CitySimulator:
             sensor_idx += 3
 
             # 1 energy substation per district
-            eid = f"ENE-{d[:3].upper()}-01"
+            semt = _pick_semt(city, d, 11)
+            eid = f"ENE-{d_code}-01"
             self.latest_energy[eid] = {
-                "substation_id": eid, "district": d, "city": district.get("city", "İstanbul"),
+                "substation_id": eid, "district": d, "city": city,
                 "lat": district["lat"] + random.uniform(-0.01, 0.01),
                 "lng": district["lng"] + random.uniform(-0.01, 0.01),
                 "current_consumption": 0, "predicted_consumption": 0,
@@ -379,10 +430,11 @@ class CitySimulator:
 
             # 4 waste containers per district
             for i in range(4):
-                cid = f"WST-{d[:3].upper()}-{i+1:02d}"
+                semt = _pick_semt(city, d, 20 + i)
+                cid = f"WST-{d_code}-{i+1:02d}"
                 self.latest_waste[cid] = {
-                    "container_id": cid, "district": d, "city": district.get("city", "İstanbul"),
-                    "location_name": f"{d} - Nokta {i+1}",
+                    "container_id": cid, "district": d, "city": city,
+                    "location_name": f"{d} {semt}",
                     "lat": district["lat"] + random.uniform(-0.025, 0.025),
                     "lng": district["lng"] + random.uniform(-0.025, 0.025),
                     "fill_pct": random.uniform(10, 60),
@@ -392,10 +444,11 @@ class CitySimulator:
                 }
 
             # 1 air quality station per district
-            aid = f"AIR-{d[:3].upper()}-01"
+            semt = _pick_semt(city, d, 31)
+            aid = f"AIR-{d_code}-01"
             self.latest_air[aid] = {
-                "station_id": aid, "district": d, "city": district.get("city", "İstanbul"),
-                "location_name": f"{d} Hava Kalitesi İstasyonu",
+                "station_id": aid, "district": d, "city": city,
+                "location_name": f"{d} {semt} Hava Kalitesi İstasyonu",
                 "lat": district["lat"] + random.uniform(-0.01, 0.01),
                 "lng": district["lng"] + random.uniform(-0.01, 0.01),
                 "aqi": 50, "pm25": 10.0, "pm10": 20.0,
@@ -405,8 +458,8 @@ class CitySimulator:
 
             # Safety zone risk per district
             self.zone_risks[d] = {
-                "zone_id": f"ZONE-{d[:3].upper()}",
-                "district": d, "city": district.get("city", "İstanbul"),
+                "zone_id": f"ZONE-{d_code}",
+                "district": d, "city": city,
                 "lat": district["lat"], "lng": district["lng"],
                 "risk_score": 0.2, "risk_level": "LOW",
                 "incident_count_24h": 0,
@@ -551,6 +604,7 @@ class CitySimulator:
         if random.random() < 0.15:  # 15% chance each tick
             district = random.choice(ALL_DISTRICTS)
             itype = random.choice(INCIDENT_TYPES)
+            semt = _pick_semt(district.get("city", "İstanbul"), district["name"], random.randint(1, 999))
             severity_score = random.uniform(0.2, 1.0)
             if severity_score >= 0.8:
                 severity = "CRITICAL"
@@ -564,7 +618,7 @@ class CitySimulator:
             incident = SafetyIncident(
                 incident_id=f"INC-{uuid.uuid4().hex[:8].upper()}",
                 district=district["name"],
-                location_name=f"{district['name']} - {random.choice(['Merkez', 'Kuzey', 'Güney', 'Doğu', 'Batı'])}",
+                location_name=f"{district['name']} {semt}",
                 lat=district["lat"] + random.uniform(-0.03, 0.03),
                 lng=district["lng"] + random.uniform(-0.03, 0.03),
                 incident_type=itype,
