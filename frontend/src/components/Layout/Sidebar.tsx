@@ -21,12 +21,22 @@ const navItems = [
   { href: '/admin',       tr: 'Tenant Admin',    en: 'Tenant Admin',      icon: Settings2,       color: 'text-fuchsia-400' },
 ]
 
-export default function Sidebar() {
+interface SidebarProps {
+  isOpen?: boolean
+  onClose?: () => void
+}
+
+export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
   const { tx } = useLanguage()
   const pathname = usePathname()
 
   return (
-    <aside className="w-64 flex-shrink-0 bg-city-card border-r border-city-border flex flex-col">
+    <aside className={clsx(
+      'w-64 flex-shrink-0 bg-city-card border-r border-city-border flex flex-col',
+      'fixed inset-y-0 left-0 z-30 transition-transform duration-300',
+      'lg:relative lg:translate-x-0 lg:z-auto',
+      isOpen ? 'translate-x-0' : '-translate-x-full'
+    )}>
       {/* Logo */}
       <div className="px-6 py-5 border-b border-city-border">
         <div className="flex items-center gap-3">
@@ -47,6 +57,7 @@ export default function Sidebar() {
             <Link
               key={href}
               href={href}
+              onClick={onClose}
               className={clsx(
                 'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all group',
                 active

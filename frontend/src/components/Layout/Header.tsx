@@ -1,12 +1,16 @@
 'use client'
 import { useState, useEffect } from 'react'
-import { Bell, RefreshCw } from 'lucide-react'
+import { Bell, RefreshCw, Menu } from 'lucide-react'
 import { cityWS } from '@/lib/websocket'
 import LanguageSwitch from '@/components/Language/LanguageSwitch'
 import { useLanguage } from '@/components/Language/LanguageProvider'
 import { api } from '@/lib/api'
 
-export default function Header() {
+interface HeaderProps {
+  onMenuClick?: () => void
+}
+
+export default function Header({ onMenuClick }: HeaderProps) {
   const { lang, tx } = useLanguage()
   const [connected, setConnected] = useState(false)
   const [lastUpdate, setLastUpdate] = useState<string>('')
@@ -41,16 +45,24 @@ export default function Header() {
     .join('') || 'CV'
 
   return (
-    <header className="h-14 bg-city-card border-b border-city-border flex items-center justify-between px-6 flex-shrink-0">
-      <div className="flex items-center gap-4">
+    <header className="h-14 bg-city-card border-b border-city-border flex items-center justify-between px-4 md:px-6 flex-shrink-0">
+      <div className="flex items-center gap-3">
+        {/* Hamburger - only on mobile */}
+        <button
+          onClick={onMenuClick}
+          className="lg:hidden p-2 rounded-lg hover:bg-white/5 transition-colors text-slate-400"
+          aria-label="Open menu"
+        >
+          <Menu size={20} />
+        </button>
         <div className="flex items-center gap-2">
           <span className={`w-2 h-2 rounded-full ${connected ? 'bg-city-green animate-pulse' : 'bg-slate-600'}`} />
-          <span className="text-xs text-slate-400">
+          <span className="text-xs text-slate-400 hidden sm:inline">
             {connected ? tx('Canlı Veri Aktif', 'Live Data Active') : tx('Bağlanıyor...', 'Connecting...')}
           </span>
         </div>
         {lastUpdate && (
-          <span className="text-xs text-slate-600 flex items-center gap-1">
+          <span className="text-xs text-slate-600 items-center gap-1 hidden md:flex">
             <RefreshCw size={11} />
             {tx('Son güncelleme', 'Last update')}: {lastUpdate}
           </span>
