@@ -90,7 +90,7 @@ export default function WastePage() {
             ? `${Math.round(containers.reduce((a, c) => a + (c.fill_pct ?? 0), 0) / containers.length)}%`
             : '—'
         } icon={CheckCircle} iconColor="text-city-cyan" subtitle={tx('genel ortalama', 'overall average')} />
-        <StatCard title={tx('Optimize Rota', 'Optimized Route')} value={routes ? `${routes.total_routes ?? 0}` : '—'}
+        <StatCard title={tx('Optimize Rota', 'Optimized Route')} value={routes ? `${routes.routes?.length ?? 0}` : '—'}
           icon={Route} iconColor="text-amber-400" subtitle={tx('araç rotası', 'vehicle route')} />
       </div>
 
@@ -113,18 +113,25 @@ export default function WastePage() {
             <div className="city-card">
               <p className="text-xs text-slate-500 uppercase tracking-wider mb-3 font-medium">Optimize Rotalar</p>
               <div className="space-y-3">
-                {routes.routes?.slice(0, 3).map((r: any, i: number) => (
-                  <div key={i} className={`p-3 rounded border text-xs ${r.priority === 'urgent' ? 'border-red-700/40 bg-red-900/10' : 'border-city-border bg-white/3'}`}>
+                {routes.routes?.slice(0, 3).map((r: any, i: number) => {
+                  const isUrgent = String(r.priority ?? '').toUpperCase() === 'URGENT'
+                  const topStops = (r.stops ?? [])
+                    .slice(0, 3)
+                    .map((s: any) => (typeof s === 'string' ? s : (s.location ?? s.container_id ?? 'N/A')))
+                    .join(', ')
+
+                  return (
+                  <div key={i} className={`p-3 rounded border text-xs ${isUrgent ? 'border-red-700/40 bg-red-900/10' : 'border-city-border bg-white/3'}`}>
                     <div className="flex items-center justify-between mb-1">
-                      <span className={`font-medium ${r.priority === 'urgent' ? 'text-red-400' : 'text-amber-400'}`}>
-                        Araç {i + 1} — {r.priority === 'urgent' ? 'ACİL' : 'NORMAL'}
+                      <span className={`font-medium ${isUrgent ? 'text-red-400' : 'text-amber-400'}`}>
+                        Araç {i + 1} — {isUrgent ? 'ACİL' : 'NORMAL'}
                       </span>
-                      <span className="text-slate-500">{r.stops?.length ?? 0} durak</span>
+                      <span className="text-slate-500">{r.total_stops ?? r.stops?.length ?? 0} durak</span>
                     </div>
-                    <p className="text-slate-400">Mesafe: {r.estimated_distance_km?.toFixed(1)} km</p>
-                    <p className="text-slate-500 mt-0.5">{r.stops?.slice(0, 3).join(', ')}{r.stops?.length > 3 ? '...' : ''}</p>
+                    <p className="text-slate-400">Süre: {r.estimated_duration_min ?? 0} dk · Atık: {Math.round(r.total_waste_liters ?? 0)} L</p>
+                    <p className="text-slate-500 mt-0.5">{topStops}{(r.stops?.length ?? 0) > 3 ? '...' : ''}</p>
                   </div>
-                ))}
+                )})}
               </div>
             </div>
           ) : (
