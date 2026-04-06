@@ -25,7 +25,9 @@ class WebSocketManager:
             return
         message = json.dumps(data)
         dead = set()
-        for connection in self.active_connections:
+        # Iterate over a snapshot to avoid "set changed size during iteration"
+        # when clients connect/disconnect during broadcast.
+        for connection in list(self.active_connections):
             try:
                 await connection.send_text(message)
             except Exception:
